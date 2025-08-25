@@ -27,7 +27,7 @@ jobs:
           username: ${{ secrets.TENCENT_USER }}
           key: ${{ secrets.TENCENT_KEY }}
           script: |
-            cd /home/ubuntu/Narratium.ai
+            cd /root/Narratium.ai
             git pull origin main
             docker-compose pull
             docker-compose down
