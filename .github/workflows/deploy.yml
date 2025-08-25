@@ -8,10 +8,17 @@ on:
 jobs:
   deploy:
     runs-on: ubuntu-latest
+    environment: prod  # ✅ 关键：启用环境 Secrets
 
     steps:
       - name: Checkout code
         uses: actions/checkout@v3
+
+      - name: Debug Secrets Injection
+        run: |
+          [ -n "${{ secrets.TENCENT_HOST }}" ] && echo "✅ Host is set" || echo "❌ Host is missing"
+          [ -n "${{ secrets.TENCENT_USER }}" ] && echo "✅ User is set" || echo "❌ User is missing"
+          echo "🔒 Key length: ${{ secrets.TENCENT_KEY != '' && 'Present' || 'Missing' }}"
 
       - name: Deploy via SSH
         uses: appleboy/ssh-action@v0.1.10
@@ -22,5 +29,8 @@ jobs:
           script: |
             cd /home/ubuntu/Narratium.ai
             git pull origin main
+            docker-compose pull
             docker-compose down
             docker-compose up --build -d
+          fail-on-error: true
+          debug: true
